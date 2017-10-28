@@ -1,0 +1,452 @@
+// Javascript library for the /user page.
+// TODO(erikc): [post-launch] This is almost directly copied from the legacy
+// user.php. It needs unittesting and documentation.
+//
+//
+// This uses several global vars filled out in user.html.
+//
+// String constants:
+//   var addToFavoritesTxt
+//   var removeFromFavoritesTxt
+//   var badCharInTagMessage
+//
+// Constants:
+//   var ownerId
+//   var xsrfToken
+//   var visitorIsOwner
+//
+// State:
+//   var photosByTag
+//   var tagsByPhoto
+//   var currentTags
+//   var applyTagsMode
+//   var editTagsMode
+
+
+/**
+ * Functions for the Panoramio /user page.
+ * @namespace
+ */
+var panoramio_user = {};
+
+
+/**
+ * Number of tags that the current user has.
+ * @type number|null
+ * @private
+ */
+panoramio_user.numTags_ = null;
+
+
+/**
+ * Number of tags to display before a "More" button is needed.
+ * @type number
+ * @constant
+ * @private
+ */
+panoramio_user.NUM_TAGS_FOLD_ = 10;
+
+
+
+function returnFalseWrapper(fn) {
+  var args = [];
+  for (var i = 1; i < arguments.length; i++)
+    args.push(arguments[i]);
+  return function() {
+    fn.apply(this, args);
+    return false;
+  };
+}
+
+function refreshPhotoTransparency(photo) {
+  function aux(p) {
+    $('#photo_' + p)
+        // check that photo has all the currentTags.
+        // [].concat(currentTags) is the same as currentTags.clone()
+        //      (except that clone doesn't exist)
+        .fadeTo('fast', ($.remove([].concat(currentTags),
+                                  tagsByPhoto[p]).length == 0) ? 1.0 : 0.4);
+  }
+
+  if (photo)
+    aux(photo);
+  else
+    for (var photo in tagsByPhoto)
+      aux(photo);
+}
+
+function getTagURL(tag) {
+  return './' + ownerId + '/tags/' + encodeURIComponent(tag);
+}
+
+function setApplyTagsMode(enter) {
+  if (enter == applyTagsMode) return;
+  if (enter) {
+    $('#user_header').hide();
+    $('#photos_cont .photo').each(function() {
+      id = $(this).attr('id').substring('photo_'.length);
+      $(this).click(returnFalseWrapper(toggleTagsFromPhoto, id));
+    });
+  }
+  else {
+    currentTags = [];
+    $('#user_header').show();
+    $('#tags > li').removeClass('tag_selected');
+    $('#tags .apply').show();
+    $('#tags .done').hide();
+    $('#photos_cont .photo').unbind('click');
+  }
+  applyTagsMode = enter;
+  refreshPhotoTransparency();
+}
+
+function toggleEditTagsMode() {
+  if (applyTagsMode)
+    setApplyTagsMode(false);
+
+  var tagsToRename = {};
+
+  if (editTagsMode) {
+    $('#tags .tag_input').each(function(i, tagInput) {
+      tagInput = $(tagInput);
+      var newTag = $(tagInput).val();
+
+      var tagLink = tagInput.siblings('.tag');
+      var oldTag = tagLink.text();
+
+      if (oldTag != newTag) {
+        tagLink.text(newTag).attr('href', getTagURL(newTag));
+        tagsToRename[oldTag] = newTag;
+      }
+    });
+
+    renameTags(tagsToRename);
+  } else {
+    panoramio_user.showMoreTags_();
+  }
+
+  editTagsMode = !editTagsMode;
+
+  if (editTagsMode) {
+    $('#tags .tag').hide();
+    $('#tags .apply').hide();
+    $('#tags .tag_input').show();
+    $('#edit_tags').hide();
+    $('#done_tags').show();
+  } else {
+    $('#tags .tag').show();
+    $('#tags .apply').show();
+    $('#tags .tag_input').hide();
+    $('#edit_tags').show();
+    $('#done_tags').hide();
+  }
+  $('#tags .delete').css('visibility', editTagsMode ? 'visible' : 'hidden');
+}
+
+function addToSelectedTags(tag) {
+  currentTags.push(tag);
+
+  if (currentTags.length == 1)
+    setApplyTagsMode(true);
+  else
+    refreshPhotoTransparency();
+}
+
+function removeFromSelectedTags(tag) {
+  $.remove(currentTags, [tag]);
+
+  if (currentTags.length == 0)
+    setApplyTagsMode(false);
+  else
+    refreshPhotoTransparency();
+}
+
+
+// Maximum number of tags that can be applied to a photo in a single click.
+// This must be kept in sync with the constant of the same name in
+// server/action_handlers.py:HandleTagsByPhoto.
+var MAX_NUM_INPUT_TAGS = 10;
+
+
+/**
+ * Initializes the code for the /user page.
+ * This is to be called on the READY event.
+ *
+ * @param {number} numTags Number of tags for the current user.
+ */
+panoramio_user.initialize = function(numTags) {
+  $('#edit_tags, #done_tags').click(returnFalseWrapper(toggleEditTagsMode));
+
+  $('#tags .delete').click(returnFalseWrapper(deleteTag));
+  $('#tags .apply').click(
+      function() {
+        if (currentTags.length >= MAX_NUM_INPUT_TAGS) return false;
+        $(this).hide().parent('li').addClass(
+            'tag_selected').find('.done').show();
+        addToSelectedTags($(this).siblings('.tag_input').val());
+        return false;
+      });
+  $('#tags .done').click(function() {
+    $(this).hide().parent('li').removeClass('tag_selected').
+        find('.apply').show();
+    removeFromSelectedTags($(this).siblings('.tag_input').val());
+    return false;
+  });
+  $('#apply_tags_done').click(returnFalseWrapper(setApplyTagsMode, false));
+  $('#star').click(switchStarred);
+
+  $('#create_tag').attr('disabled', true);
+  $('#input_tag').keyup(
+      function(event) {
+        $('#create_tag').attr('disabled', event.target.value == '');
+      });
+  $('#tags .tag_input').each(function(i, tagInput) {
+      $(tagInput).keyup(
+          function(event) {
+            showImDoneLinkIfTagsAreNotEmpty();
+          });
+    });
+
+  // Initialize tag list view, when the visitor is not the owner.
+  panoramio_user.numTags_ = numTags;
+  $('.tag_above_fold').show();
+  panoramio_user.showLessTags_();
+  $('#show_all_tags a').click(panoramio_user.showMoreTags_);
+
+  // Configure and load asynchronously the list of groups of which this user is
+  // a member.
+  this.groupMembershipWidget_ = null;
+  if ($('#group_membership_ajax').length) {
+    this.groupMembershipWidget_ = new pano.group.UserGroupMembershipWidget(
+        'group_membership_ajax', ownerId);
+  }
+};
+
+
+/**
+ * Shows all the tags for this user, and hides the "show more" button.
+ *
+ * @private
+ * @return {boolean} False, to disable default event handling.
+ */
+panoramio_user.showMoreTags_ = function() {
+  $('.tag_below_fold').show();
+  $('#show_all_tags').hide();
+  return false;
+};
+
+
+/**
+ * Hides user tags beyond the NUM_TAGS_FOLD_ amount, and shows the "show more"
+ * button if appropriate.
+ *
+ * @private
+ * @return {boolean} False, to disable default event handling.
+ */
+panoramio_user.showLessTags_ = function() {
+  $('.tag_below_fold').hide();
+  if (panoramio_user.numTags_ > panoramio_user.NUM_TAGS_FOLD_) {
+    $('#show_all_tags').show();
+  } else {
+    $('#show_all_tags').hide();
+  }
+  return false;
+};
+
+
+function switchStarred() {
+  var s = $('#star');
+  var on = s[0].className == 'isfavorite';
+  var post_base_url = '../do/favorites/user/' + ownerId;
+  var args = {xsrf_token: xsrfToken};
+
+  if (on) {
+    s.attr({className: 'nofavorite', title: addToFavoritesTxt}).
+        attr('title', addToFavoritesTxt);
+    $.post(post_base_url + '/remove', args);
+  }
+  else {
+    s.attr({className: 'isfavorite', title: removeFromFavoritesTxt}).
+        attr('title', removeFromFavoritesTxt);
+    $.post(post_base_url + '/add', args);
+  }
+  return false;
+}
+
+$.remove = function(a, b) {
+  var i, j = 0, a_length = a.length, c = [];
+
+  a.sort();
+  b.sort();
+
+  for (i = 0; i < a_length; i++) {
+    while (j < b.length && (a[i] + '') > (b[j] + '')) {
+      j++;
+    }
+    if (j == b.length) {
+      c = c.concat(a.slice(i));
+      break;
+    }
+    if ((a[i] + '') < (b[j] + '')) {
+      c.push(a[i]);
+    }
+  }
+  for (i = 0; i < c.length; i++) {
+    a[i] = c[i];
+  }
+  a.splice(c.length, (a_length - c.length));
+  return a;
+};
+
+function guiUpdateCaptions(photo) {
+  var caption = $('#caption_' + photo).empty();
+
+  if (typeof tagsByPhoto[photo][0] != 'undefined') {
+    var tag = tagsByPhoto[photo][0];
+    caption.append($('<a/>').attr('href', getTagURL(tag)).text(tag));
+  }
+
+  for (var j = 1; j < tagsByPhoto[photo].length; j++) {
+    var tag = tagsByPhoto[photo][j];
+    caption.append($('<span/>').text(', ')).
+        append($('<a/>').attr('href', getTagURL(tag)).text(tag));
+  }
+}
+
+function toggleTagsFromPhoto(photo) {
+  var tags = currentTags;
+  var tagsInPhoto = tagsByPhoto[photo];
+
+  var tagsToAdd = $.remove([].concat(tags), tagsInPhoto);
+  var tagsToRemove = $.remove([].concat(tags), tagsToAdd);
+
+  guiAddTagsToPhoto(tagsToAdd, photo);
+  guiRemoveTagsFromPhoto(tagsToRemove, photo);
+  guiUpdateCaptions(photo);
+
+  refreshPhotoTransparency(photo);
+
+  if (tagsToAdd.length > 0) {
+    $.post('../do/tags/photo/' + photo + '/add', {
+             'xsrf_token': xsrfToken,
+             'tags': tagsToAdd.join('+'),
+             'owner_id': ownerId});
+  }
+  if (tagsToRemove.length > 0) {
+    $.post('../do/tags/photo/' + photo + '/remove', {
+             'xsrf_token': xsrfToken,
+             'tags': tagsToRemove.join('+'),
+             'owner_id': ownerId});
+  }
+}
+
+function guiAddTagsToPhoto(tags, photo) {
+  $.each(tags, function(i, tag) {
+    if (typeof photosByTag[tag] == 'undefined')
+      photosByTag[tag] = [photo];
+    else
+      photosByTag[tag].push(photo);
+  });
+
+  tagsByPhoto[photo] = $.merge(tagsByPhoto[photo], tags);
+}
+
+function guiRemoveTagsFromPhoto(tags, photo) {
+  $.each(tags, function(i, tag) {
+    $.remove(photosByTag[tag], [photo]);
+  });
+
+  $.remove(tagsByPhoto[photo], tags);
+}
+
+function renameTags(tags) {
+  var tagNamePairs = [];
+
+  $.each(tags, function(old_tag, new_tag) {
+      tagNamePairs.push(old_tag + ',' + new_tag);
+
+      if (typeof photosByTag[old_tag] == 'undefined') return;
+
+      var photos = [].concat(photosByTag[old_tag]);
+
+      $.each(photos, function(i, photo) {
+          guiRemoveTagsFromPhoto([old_tag], photo);
+          guiAddTagsToPhoto([new_tag], photo);
+          guiUpdateCaptions(photo);
+        });
+    });
+
+  if (tagNamePairs.length > 0) {
+    $.post('../do/tags/user/' + ownerId + '/rename',
+           {xsrf_token: xsrfToken, tags: tagNamePairs.join('+')});
+  }
+}
+
+function deleteTag() {
+  var delImg = $(this);
+  var tag = delImg.siblings('.tag_input').val();
+
+  if (typeof photosByTag[tag] != 'undefined') {
+    var photos = [].concat(photosByTag[tag]);
+
+    $.each(photos, function(i, p) {
+      guiRemoveTagsFromPhoto([tag], p);
+      guiUpdateCaptions(p);
+    });
+
+    delete photosByTag[tag];
+  }
+
+  delImg.parent('li').remove();
+  $.post('../do/tags/user/' + ownerId + '/delete',
+         {xsrf_token: xsrfToken, tags: tag});
+}
+
+
+// Show the [I'm Done] link if all tag names are non-empty, and hide it
+// otherwise.
+function showImDoneLinkIfTagsAreNotEmpty() {
+  var disable = false;
+  $('#tags .tag_input').each(function(i, tagInput) {
+      if ($(tagInput).val() == '') disable = true;
+    });
+  if (disable) {
+    $('#done_tags').hide();
+  } else {
+    $('#done_tags').show();
+  }
+}
+
+
+function createTag(tag) {
+  if (tag.match(/[,+\/]/)) {
+    alert(badCharInTagMessage);
+    return false;
+  }
+
+  if (typeof photosByTag[tag] != 'undefined')
+    return false;
+
+  panoramio_user.showMoreTags_();
+
+  photosByTag[tag] = [];
+
+  var li = $('#hidden_tag_li').clone(true);
+  li.find('.tag').attr('href', getTagURL(tag)).text(tag);
+  li.find('.tag_input').val(tag);
+  li.find('.tag_input').keyup(showImDoneLinkIfTagsAreNotEmpty);
+
+  $('#tags #show_all_tags').before(li);
+  li.show();
+  $('#tags > li:even').not('#show_all_tags').addClass('even');
+  $('#tags > li:odd').not('#show_all_tags').addClass('odd');
+
+  li.attr('id', '');
+  $('#hidden_tag_li').removeClass('even');
+
+  $.post('../do/tags/user/' + ownerId + '/add',
+         {xsrf_token: xsrfToken, tags: tag});
+  $('#input_tag').val('');  // Empty the input box for a new tag.
+
+  return false;
+}

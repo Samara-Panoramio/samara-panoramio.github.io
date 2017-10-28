@@ -1,0 +1,200 @@
+// Copyright 2010 Google Inc.  All Rights Reserved.
+/**
+ * @fileoverview Javascript code for the /photo page.
+ *
+ * @author rogerts@google.com (Roger Trias Sanz)
+ */
+
+
+// This uses several global vars filled out in photo.html.
+//   var photoId
+//   var ownerId
+//   var currentLanguage
+//   var translatedFromStr
+//   var translatedTextElement
+//   var languageMap
+
+
+/**
+ * Functions for the Panoramio /photo page.
+ * @namespace
+ */
+var panoramio_photo = {};
+
+
+/**
+ * Number of tags that the current photo has.
+ * @type ?number
+ * @private
+ */
+panoramio_photo.numTags_ = null;
+
+/**
+ * The Panoramio id of the photo.
+ * @type ?number
+ * @private
+ */
+panoramio_photo.photoId_ = null;
+
+/**
+ * XSRF token.
+ * @type ?string
+ * @private
+ */
+panoramio_photo.xsrfToken_ = null;
+
+/**
+ * Number of tags to display before a "More" button is needed.
+ * @type number
+ * @constant
+ * @private
+ */
+panoramio_photo.NUM_TAGS_FOLD_ = 10;
+
+/**
+ * Widget to display the groups of a photo.
+ *
+ * It is null if groups is not enabled.
+ *
+ * @type ?pano.group.PhotoGroupMembershipWidget
+ * @private
+ */
+panoramio_photo.groupMembershipWidget_ = null;
+
+
+/**
+ * Initializes the code for the /photo page.
+ * This is to be called on the READY event.
+ *
+ * @param {number} photoId Id of the current photo.
+ * @param {number} numTags Number of tags for the current photo.
+ * @param {string} xsrfToken The XSRF token of the page.
+ */
+panoramio_photo.initialize = function(photoId, numTags, xsrfToken) {
+  panoramio_photo.photoId_ = photoId;
+  panoramio_photo.numTags_ = numTags;
+  panoramio_photo.xsrfToken_ = xsrfToken;
+  for (var i = 0; i < panoramio_photo.NUM_TAGS_FOLD_; ++i) {
+    $('#tag_element_' + i).show();
+  }
+  panoramio_photo.showLessTags_();
+  $('#show_all_tags a').click(panoramio_photo.showMoreTags_);
+
+  if ($('#group_membership_ajax').length) {
+    panoramio_photo.groupMembershipWidget_ =
+      new pano.group.PhotoGroupMembershipWidget(
+        'group_membership_ajax', ownerId, photoId);
+  }
+};
+
+
+/**
+ * Shows all the tags for this photo, and hides the "show more" button.
+ *
+ * @private
+ * @return {boolean} False, to disable default event handling.
+ */
+panoramio_photo.showMoreTags_ = function() {
+  for (var i = panoramio_photo.NUM_TAGS_FOLD_;
+       i < panoramio_photo.numTags_; ++i) {
+    $('#tag_element_' + i).show();
+  }
+  $('#show_all_tags').hide();
+  return false;
+};
+
+
+/**
+ * Hides photo tags beyond the NUM_TAGS_FOLD_ amount, and shows the "show more"
+ * button if appropriate.
+ *
+ * @private
+ * @return {boolean} False, to disable default event handling.
+ */
+panoramio_photo.showLessTags_ = function() {
+  for (var i = panoramio_photo.NUM_TAGS_FOLD_;
+       i < panoramio_photo.numTags_; ++i) {
+    $('#tag_element_' + i).hide();
+  }
+  if (panoramio_photo.numTags_ > panoramio_photo.NUM_TAGS_FOLD_) {
+    $('#show_all_tags').show();
+  } else {
+    $('#show_all_tags').hide();
+  }
+  return false;
+};
+
+
+/**
+ * Handles click on the Translate button.
+ * Fetches automatic translation from Google Translate via AJAX and updates the
+ * UI accordingly.
+ *
+ * @this {Element} The anchor element the user clicked on.
+ * @return {boolean} False, to disable default event handling.
+ */
+panoramio_photo.translateComment = function() {
+  var id = this.id.substring(1);
+  var sourceTextElement = $('#' + id + ' .photo-comment-text');
+  var linkElement = $(this);
+  linkElement.addClass('translate-heading');
+  linkElement.attr('href', 'javascript:void(0);').unbind();
+
+  function showError() {
+    linkElement.html(translateErrorStr);
+  }
+
+  function setTranslation(response, textStatus) {
+    // The expected response is in the form of:
+    // {
+    //   "data": {
+    //     "translations": [
+    //       {
+    //         "translatedText": "Hallo Welt",
+    //         "detectedSourceLanguage": "en"
+    //       }
+    //     ]
+    //   }
+    // }
+    //
+    // from http://code.google.com/apis/language/translate/v2/using_rest.html
+
+    if (!('data' in response)) {
+      showError();
+      return;
+    }
+    translatedTextElement = $('#tr' + id);
+    var sourceLanguage = languageMap[
+        response.data.translations[0].detectedSourceLanguage];
+    linkElement.html(translatedFromStr.replace(
+        '%(language)s',
+        '<strong id="lang' + id + '">' + sourceLanguage + '</strong>'));
+    translatedTextElement.html(response.data.translations[0].translatedText);
+    sourceTextElement.addClass('original-text');
+    translatedTextElement.slideDown('fast');
+  }
+
+  // Panoramio uses underscore as a separator in language tags, while IETF
+  // (RFC 5646) specifies dash.
+  var targetLanguage = currentLanguage.replace('_', '-');
+  // If the visitor's language is not supported we fall back to English.
+  if (!(targetLanguage in languageMap)) {
+    targetLanguage = targetLanguage.split('-')[0];
+    if (!(targetLanguage in languageMap)) {
+      targetLanguage = 'en';
+    }
+  }
+  $.ajax({
+    type: 'GET',
+    url: '../../https@www.googleapis.com/language/translate/v2',
+    dataType: 'jsonp',
+    data: {
+      // Panoramio's API key for client-side requests.
+      key: 'AIzaSyBEOSsz1rQM3IQ-0TJan8-zR0iTAUk7AsU',
+      q: sourceTextElement.html(),
+      target: targetLanguage
+    },
+    success: setTranslation,
+    error: showError});
+  return false;
+};

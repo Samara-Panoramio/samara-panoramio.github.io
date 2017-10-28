@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+
+<html xmlns='http://www.w3.org/1999/xhtml' dir='ltr'>
+
+<head>
+  
+
+  <title>Panoramio - Photos by Sergey Pazyurich
+</title>
+  <meta name='description' content='Photo-sharing community. Discover the world through photos.' />
+  <meta http-equiv="X-UA-Compatible" content="IE=9" />
+  <link rel='shortcut icon' type='image/x-icon' href='../img/favicon.ico' />
+  <link rel="stylesheet" type="text/css" href="../../https@fonts.googleapis.com/css@family=Roboto_3A300,400_7COpen+Sans_3A300&subset=latin,latin-ext,cyrillic,cyrillic-ext,greek,greek-ext,vietnamese">
+  
+    <!--ipt type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-184567-1'],
+                ['_trackPageview', '/user/...']);
+      
+
+      (function() {
+        var ga = document.createElement('script');
+        ga.src = ('https:' == document.location.protocol ?
+            'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        ga.setAttribute('async', 'true');
+        document.documentElement.firstChild.appendChild(ga);
+      })();
+    </scri-->
+  
+  <script type="text/javascript">
+    var close_str = '[Close]';
+    var we_cant_find_str =
+       'We can\u0027t find \u003Cem\u003E%s\u003C/em\u003E.';
+  </script>
+  
+    <link rel='stylesheet' type='text/css' href='../css/glass.ltr.css@v=5fe504' />
+  
+    <link rel='stylesheet' type='text/css' href='../css/screen.ltr.css@v=5a6445' />
+  
+  
+    <script type='text/javascript' src='../../https@ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js'></script>
+  
+    <script type='text/javascript' src='../js/jquery-history.js'></script>
+  
+    <script type='text/javascript' src='../../https@maps.googleapis.com/maps/api/js@sensor=false&libraries=places,search&language=en&client=google-panoramio'></script>
+  
+    <script type='text/javascript' src='../js_lib/panoramio.js@v=8546ec'></script>
+  
+    <script type='text/javascript' src='../js/user.js@sv=5d28d8'></script>
+  
+    <script type='text/javascript' src='../js/favorites.js'></script>
+  
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel='stylesheet' type='text/css' href='../css/screen_interim.ltr.css@v=5e6d02'>
+  <link rel='stylesheet' type='text/css' href='../css/acrylic.ltr.css@v=218c14'>
+</head>
+
+
+<body id="generic"
+  >
+  
+
+  
+
+  
+    
+
+
+
+
+<div class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="../default.htm" class="navbar-left">
+      <span class="navbar-logo">
+        <span class="navbar-logo-image"></span>
+        <span class="navbar-logo-text">
+          <span class="navbar-logo-separator"></span>
+          
+          <span>Google Maps</span>
+        </span>
+      </span>
+    </a>
+
+    <div class="collapsed-menu">
+      <div id="collapsed-menu-button" class="goog-toolbar-menu-button collapsed-menu-icon">
+
+        <div class="collapse-menu-container goog-menu" style="display: none; background-color: rgba(0,0,0,0.8); width: 100%;">
+            <div class="collapse-menu-profile">
+              
+                <a id="navbar-signup-link" class="navbar-signup-link-collapsed"
+                    
+                    href="../signin">Sign in</a>
+              
+            </div>
+
+            <div class="collapse-menu-profile-links">
+              
+                <div class="collapse-menu-profile-link-container">
+                      
+                  <a href="../help" class="collapse-menu-profile-link">Help</a>
+                </div>
+              
+            </div>
+
+          </div>
+
+
+        </div>
+    </div>
+
+    <div class="navbar-profile">
+      
+        <div id="navbar-signin-link-container">
+          
+          <a id="navbar-signin-direct-link" href="../signin/google">Sign in</a>
+          <div id="signin-menu-button" class="goog-menu-button">
+            <div class="goog-menu" style="display: none; background-color: rgba(0,0,0,0.8);">
+              <div id="signin-menu-container">
+                <a id="navbar-signin-drop-link"
+                    
+                    href="../signin/google">Sign in with a Google account</a>
+                <a id="navbar-signin-legacy-drop-link"
+                    
+                    href="../signin/legacy">Use a legacy account</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+  <div class="interim-important_notice_wrapper">
+    <div class="interim-important_notice">
+      
+      
+        Panoramio is closing. <a class="interim-important_notice_link" href="../maps-faq">Learn how to back up your data</a>.
+      
+    </div>
+  </div>
+
+
+
+
+
+
+<script type="text/javascript">
+//<![CDATA[
+  pano.translation.register('Connect account',
+  
+                            'Connect account');
+  pano.translation.register('Connecting account…',
+  
+                            'Connecting account...');
+  pano.translation.register('Connecting to Google+ failed.',
+  
+                            'Connecting to Google+ failed.');
+
+  $(document).ready(function() {
+    $('#gplus_profile_avatar').error(function() {
+      $(this).unbind('error');
+      $(this).attr('src', '../img/user_avatar.png');
+    });
+  });
+//]]>
+</script>
+
+<div id="gplus-upgrade-dialog" style="display: none;"
+     
+  title="Connect your Google+ account to Panoramio">
+  <div id="gplus-upgrade-dialog-content">
+    <div id="gplus_profile_explanation">
+     
+      
+        This is how your name and profile photo will appear on Panoramio if you connect this Google+ account.
+        You cannot switch to a different account later.
+        <a href="../help/gplus-faq" target="_blank">Learn more</a>.
+      </div>
+    <img src="../img/user_avatar.png" width="120" height="120"
+        id="gplus_profile_avatar" alt="">
+    <div class="gplus_profile_info">
+      <div id="gplus_profile_name"></div>
+      <div id="gplus_profile_location"></div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  pano.acrylic.Header.start(null,
+                            'an:j4P77eVgIQoSqsopaUS7LucbmxLVZyY7gEetGhwkr906MTUwMDc2NTg5NzUyNTY1MA', true);
+</script>
+
+  
+
+  <div class="content_wrapper" id="user_page_content_wrapper">
+
+  
+    
+      <div id="status_message" class="wide" style="display: none;">
+      </div>
+    
+  
+
+  
+
+<div id="photo-col" style="width: 900px;">
+
+  <div id="user-page_main-header">
+    <div class="user-page_main-header_card">
+      <div id="user_profile_info">
+        <div class="user-page_profile_info user-page_main-lede" style="margin-left: 10px;">
+            Sergey Pazyurich
+        </div>
+
+      </div>
+    </div>
+
+    
+    <div style="clear: both;"></div>
+  </div>
+
+
+  <div id="photos_cont" style="width: 100%;">
+      <div id="user-page_column0" class="user-page_column">
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 191px;">
+    <a href="../photo/32872196">
+      <img id="photo_32872196" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/32872196.jpg"
+          title="Не воровать"
+          alt="Не воровать"
+          width="280"
+          height="191" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/32872196"
+              >Не воровать</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 286px;">
+    <a href="../photo/30822816">
+      <img id="photo_30822816" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30822816.jpg"
+          title=""
+          alt=""
+          width="280"
+          height="286" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30822816"
+              >&nbsp;</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 210px;">
+    <a href="../photo/30336810">
+      <img id="photo_30336810" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30336810.jpg"
+          title="Кто в туалете живёт?"
+          alt="Кто в туалете живёт?"
+          width="280"
+          height="210" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30336810"
+              >Кто в туалете живёт?</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 386px;">
+    <a href="../photo/30209158">
+      <img id="photo_30209158" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30209158.jpg"
+          title="Праздник к нам приходит"
+          alt="Праздник к нам приходит"
+          width="280"
+          height="386" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30209158"
+              >Праздник к нам приходит</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 184px;">
+    <a href="../photo/30181051">
+      <img id="photo_30181051" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30181051.jpg"
+          title="Снегурка, Дедушка Мороз и ёлка"
+          alt="Снегурка, Дедушка Мороз и ёлка"
+          width="280"
+          height="184" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30181051"
+              >Снегурка, Дедушка Мороз и ёлка</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 187px;">
+    <a href="../photo/28977710">
+      <img id="photo_28977710" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/28977710.jpg"
+          title="Революционная-Скляренко"
+          alt="Революционная-Скляренко"
+          width="280"
+          height="187" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/28977710"
+              >Революционная-Скляренко</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 185px;">
+    <a href="../photo/28967552">
+      <img id="photo_28967552" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/28967552.jpg"
+          title="Вид "
+          alt="Вид "
+          width="280"
+          height="185" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/28967552"
+              >Вид </a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 199px;">
+    <a href="../photo/28937874">
+      <img id="photo_28937874" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/28937874.jpg"
+          title="Вид на вокзал"
+          alt="Вид на вокзал"
+          width="280"
+          height="149" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/28937874"
+              >Вид на вокзал</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+      </div>
+      <div id="user-page_column1" class="user-page_column">
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 156px;">
+    <a href="../photo/30980722">
+      <img id="photo_30980722" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30980722.jpg"
+          title=""
+          alt=""
+          width="280"
+          height="106" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30980722"
+              >&nbsp;</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 340px;">
+    <a href="../photo/30822803">
+      <img id="photo_30822803" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30822803.jpg"
+          title="Мороз"
+          alt="Мороз"
+          width="280"
+          height="340" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30822803"
+              >Мороз</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 280px;">
+    <a href="../photo/30234208">
+      <img id="photo_30234208" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30234208.jpg"
+          title="Ёлка-конус"
+          alt="Ёлка-конус"
+          width="280"
+          height="280" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30234208"
+              >Ёлка-конус</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 198px;">
+    <a href="../photo/30181101">
+      <img id="photo_30181101" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30181101.jpg"
+          title="Голубые ели"
+          alt="Голубые ели"
+          width="280"
+          height="198" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30181101"
+              >Голубые ели</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 158px;">
+    <a href="../photo/30181042">
+      <img id="photo_30181042" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30181042.jpg"
+          title="Вид на Чапаевскую"
+          alt="Вид на Чапаевскую"
+          width="280"
+          height="108" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30181042"
+              >Вид на Чапаевскую</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 221px;">
+    <a href="../photo/28967595">
+      <img id="photo_28967595" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/28967595.jpg"
+          title="Во имя святой великомученицы Татианы храм"
+          alt="Во имя святой великомученицы Татианы храм"
+          width="280"
+          height="221" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/28967595"
+              >Во имя святой великомученицы Татианы храм</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 210px;">
+    <a href="../photo/28967533">
+      <img id="photo_28967533" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/28967533.jpg"
+          title="Вид на Ново-Садовую"
+          alt="Вид на Ново-Садовую"
+          width="280"
+          height="210" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/28967533"
+              >Вид на Ново-Садовую</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 203px;">
+    <a href="../photo/28826180">
+      <img id="photo_28826180" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/28826180.jpg"
+          title="Под мостом"
+          alt="Под мостом"
+          width="280"
+          height="203" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/28826180"
+              >Под мостом</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+      </div>
+      <div id="user-page_column2" class="user-page_column" style="margin-right: 15px;">
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 359px;">
+    <a href="../photo/30822827">
+      <img id="photo_30822827" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30822827.jpg"
+          title=""
+          alt=""
+          width="280"
+          height="359" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30822827"
+              >&nbsp;</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 210px;">
+    <a href="../photo/30822795">
+      <img id="photo_30822795" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30822795.jpg"
+          title=""
+          alt=""
+          width="280"
+          height="210" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30822795"
+              >&nbsp;</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 210px;">
+    <a href="../photo/30210744">
+      <img id="photo_30210744" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30210744.jpg"
+          title="Челюсти"
+          alt="Челюсти"
+          width="280"
+          height="210" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30210744"
+              >Челюсти</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 204px;">
+    <a href="../photo/30181097">
+      <img id="photo_30181097" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/30181097.jpg"
+          title="Ёлочки"
+          alt="Ёлочки"
+          width="280"
+          height="204" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/30181097"
+              >Ёлочки</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 132px;">
+    <a href="../photo/29066361">
+      <img id="photo_29066361" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/29066361.jpg"
+          title="Вид на Монумент Славы с Галактионовской"
+          alt="Вид на Монумент Славы с Галактионовской"
+          width="280"
+          height="82" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/29066361"
+              >Вид на Монумент Славы с Галактионовской</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 210px;">
+    <a href="../photo/28967580">
+      <img id="photo_28967580" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/28967580.jpg"
+          title="Лукачева"
+          alt="Лукачева"
+          width="280"
+          height="210" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/28967580"
+              >Лукачева</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 210px;">
+    <a href="../photo/28967489">
+      <img id="photo_28967489" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/28967489.jpg"
+          title="Во имя святой великомученицы Татианы храм"
+          alt="Во имя святой великомученицы Татианы храм"
+          width="280"
+          height="210" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/28967489"
+              >Во имя святой великомученицы Татианы храм</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+          
+        
+          
+        
+          
+            
+
+
+
+
+
+<div class="user-page_photo_thumb">
+  <div class="user-page_photo_thumb_photo"
+      style="height: 154px;">
+    <a href="../photo/28826169">
+      <img id="photo_28826169" class="photo"
+          src="../../https@mw2.google.com/mw-panoramio/photos/medium/28826169.jpg"
+          title="2"
+          alt="2"
+          width="280"
+          height="154" />
+    </a>
+    <div class="thumb-overlay" style="display: block; text-align: left;">
+        <div class="thumb-overlay-text">
+          <a href="../photo/28826169"
+              >2</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          
+        
+      </div>
+  </div>
+
+  <div class="paginator-wrapper">
+    
+
+
+<div class="pages"><a href="3806052@photo_page=3">&laquo; Previous</a><a href="3806052@photo_page=1">1</a><a href="3806052@photo_page=2">2</a><a href="3806052@photo_page=3">3</a><span class="selected">4</span><a href="3806052@photo_page=5">5</a><a href="3806052@photo_page=6">6</a><a href="3806052@photo_page=5">Next &raquo;</a></div>
+
+  </div>
+
+</div> 
+
+<script type="text/javascript">
+    (function() {
+        var po = document.createElement('script'); po.type =
+        'text/javascript'; po.async = true;
+        po.src = '../../https@apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(po, s);
+      })();
+ </script>
+
+
+
+  
+    
+
+
+
+
+
+
+<script type="text/javascript">
+  pano.glass.register(
+      pano.glass.components.Footer.start,
+      [{"django_id":"ar","language_name":"\u0639\u0631\u0628\u064a","text_domain":"ar_EG.utf8"},{"django_id":"ast","language_name":"Asturian","text_domain":"ast_ES.utf8"},{"django_id":"be","language_name":"\u0431\u0435\u043b\u0430\u0440\u0443\u0441\u043a\u0430\u044f","text_domain":"be_BY.utf8"},{"django_id":"bg","language_name":"\u0411\u044a\u043b\u0433\u0430\u0440\u0441\u043a\u0438","text_domain":"bg_BG.utf8"},{"django_id":"bs","language_name":"Bosanski","text_domain":"bs_BA.utf8"},{"django_id":"ca","language_name":"Catal\u00e0","text_domain":"ca_ES.utf8"},{"django_id":"cs","language_name":"\u010ce\u0161tina","text_domain":"cs_CZ.utf8"},{"django_id":"da","language_name":"Dansk","text_domain":"da_DK.utf8"},{"django_id":"de","language_name":"Deutsch","text_domain":"de_DE.utf8"},{"django_id":"el","language_name":"\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac","text_domain":"el_GR.utf8"},{"django_id":"en","language_name":"English","text_domain":"en_US.utf8"},{"django_id":"es","language_name":"Espa\u00f1ol","text_domain":"es_ES.utf8"},{"django_id":"eo","language_name":"Esperanto","text_domain":"eo_XX.utf8"},{"django_id":"eu","language_name":"Euskara","text_domain":"eu_ES.utf8"},{"django_id":"fa","language_name":"\u0641\u0627\u0631\u0633\u064a","text_domain":"fa_IR.utf8"},{"django_id":"fr","language_name":"Fran\u00e7ais","text_domain":"fr_FR.utf8"},{"django_id":"gl","language_name":"Galego","text_domain":"gl_ES.utf8"},{"django_id":"he","language_name":"\u05e2\u05b4\u05d1\u05b0\u05e8\u05b4\u05d9\u05ea","text_domain":"he_IL.utf8"},{"django_id":"hr","language_name":"Hrvatski","text_domain":"hr_HR.utf8"},{"django_id":"id","language_name":"Indonesia","text_domain":"id_ID.utf8"},{"django_id":"it","language_name":"Italiano","text_domain":"it_IT.utf8"},{"django_id":"hu","language_name":"Magyar","text_domain":"hu_HU.utf8"},{"django_id":"ja","language_name":"\u65e5\u672c\u8a9e","text_domain":"ja_JP.utf8"},{"django_id":"ko","language_name":"\ud55c\uad6d\uc5b4","text_domain":"ko_KR.utf8"},{"django_id":"lt","language_name":"Lietuvi\u0161kai","text_domain":"lt_LT.utf8"},{"django_id":"mk","language_name":"\u041c\u0430\u043a\u0435\u0434\u043e\u043d\u0441\u043a\u0438","text_domain":"mk_MK.utf8"},{"django_id":"ms","language_name":"Bahasa Melayu","text_domain":"ms_ALL.utf8"},{"django_id":"nl","language_name":"Nederlands","text_domain":"nl_NL.utf8"},{"django_id":"no","language_name":"Norsk (Bokm\u00e5l)","text_domain":"no_NO.utf8"},{"django_id":"pl","language_name":"Polski","text_domain":"pl_PL.utf8"},{"django_id":"pt","language_name":"Portugu\u00eas (Portugal)","text_domain":"pt_PT.utf8"},{"django_id":"pt_BR","language_name":"Portugu\u00eas (Brasil)","text_domain":"pt_BR.utf8"},{"django_id":"ro","language_name":"Rom\u00e2n\u0103","text_domain":"ro_RO.utf8"},{"django_id":"ru","language_name":"\u0420\u0443\u0441\u0441\u043a\u0438\u0439","text_domain":"ru_RU.utf8"},{"django_id":"sk","language_name":"Slovensk\u00fd","text_domain":"sk_SK.utf8"},{"django_id":"sl","language_name":"Sloven\u0161\u010dina","text_domain":"sl_SI.utf8"},{"django_id":"sq","language_name":"Shqip","text_domain":"sq_AL.utf8"},{"django_id":"sr","language_name":"Srpski","text_domain":"sr_CS.utf8"},{"django_id":"fi","language_name":"Suomi","text_domain":"fi_FI.utf8"},{"django_id":"sv","language_name":"Svenska","text_domain":"sv_SE.utf8"},{"django_id":"ta","language_name":"\u0ba4\u0bae\u0bbf\u0bb4\u0bcd","text_domain":"ta_ALL.utf8"},{"django_id":"th","language_name":"\u0e20\u0e32\u0e29\u0e32\u0e44\u0e17\u0e22","text_domain":"th_TH.utf8"},{"django_id":"tr","language_name":"T\u00fcrk\u00e7e","text_domain":"tr_TR.utf8"},{"django_id":"uk","language_name":"\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u043e\u044e","text_domain":"uk_UA.utf8"},{"django_id":"vi","language_name":"Ti\u1ebfng Vi\u1ec7t","text_domain":"vi_VN.utf8"},{"django_id":"zh_CN","language_name":"\u4e2d\u6587\uff08\u7b80\u4f53\uff09","text_domain":"zh_CN.utf8"},{"django_id":"zh_TW","language_name":"\u4e2d\u6587 (\u7e41\u9ad4)","text_domain":"zh_TW.utf8"}],
+      "en");
+</script>
+
+<div class="interim-footer-root" id="footer">
+  <ul class="interim-footer-links"><li><a href="../terms">Terms of Service</a></li><li><a href="../privacy">Privacy Policy</a></li><li><a href="../help">Help</a></li><li class="footer-with_button"><div id="footer-language_button"
+          class="jfk-select glass_jfk-button_borderless
+                 footer-language_button"></div></li></ul>
+</div>
+
+  
+  </div>
+</body>
+
+</html>
